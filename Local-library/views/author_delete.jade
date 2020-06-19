@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  h1 #{title}: #{author.name}
+
+  //- if author.dateOfDeath
+  //-   p Died on: #{author.dateOfDeathFormatted}
+
+  //- if author.dateOfBirth
+  //-   p Born on: #{author.dateOfBirthFormatted}
+
+  if author.lifespan
+    p Lifespan: #{author.lifespan}
+  
+  if authorBooksList.length
+  
+    p #[strong Delete the following books before attempting to delete this author.]
+  
+    div(style='margin-left:20px;margin-top:20px')
+
+      h4 Books
+    
+      dl
+      each book in authorBooksList
+        dt 
+          a(href=book.url) #{book.title}
+        dd #{book.summary}
+
+  else
+    p Do you really want to delete this Author?
+    
+    form(method='POST' action='' autocomplete='off')
+      div.form-group
+        input#authorId.form-control(type='hidden',name='authorId', required='true', value=author._id )
+
+      button.btn.btn-primary(type='submit') Delete
