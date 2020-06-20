@@ -3,13 +3,10 @@ const Book = require('../../models/book');
 
 const genreList = function(req, res, next) {
   Genre.find()
-  .sort([['name', 'ascending']])
+  .sort({name: 1})
   .exec()
   .then(genreList => {
-    res.render('genre_list', {
-      title: 'Genre List', 
-      genreList: genreList
-    });
+    res.status(200).json({data: genreList});
   }).catch(error => next(error));
 };
 
@@ -25,12 +22,8 @@ const genreDetail = function(req, res, next) {
       error.status = 404;
       return next(error)
     }
-    res.render('genre_detail', { 
-      title: 'Genre Detail', 
-      genre: genre, 
-      genreBooks: books 
-    });
-  });
+    res.status(200).json({data: genre});
+  }).catch(error => next(error));
 };
 
 module.exports = {
