@@ -1,5 +1,6 @@
 const Genre = require('../../models/genre');
 const Book = require('../../models/book');
+const { ForbiddenError } = require('../../shared');
 
 const renderDeleteGenre = (res, genre, books) => {
   res.render('genre_delete', {
@@ -41,7 +42,19 @@ const genreDeletePost = function(req, res, next) {
   }).catch(error => next(error));
 };
 
+const deleteGenre = (req, res, next) => {
+  // promiseAll book and genre then error if there are books and delete if there are not
+  const bookFindPromise = Book.find({'genre': req.params.id})
+  .exec()
+  .then(books => {
+    if(books.length > 0) {
+      const error = new ForbiddenError('Delete books before deleting the genre');
+
+    }
+  })
+
+}
+
 module.exports = {
-  genreDeleteGet,
-  genreDeletePost
+  deleteGenre
 };
