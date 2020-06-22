@@ -1,29 +1,20 @@
 const BookInstance = require('../../models/bookinstance');
+const { ResourceNotFoundError } = require('../../shared');
 
-const bookinstanceDeleteGet = function(req, res, next) {
-
+const bookinstanceDelete = (req, res, next) => {
   BookInstance.findById(req.params.id)
-  .exec()
-  .then(bookInstance => {
-    if(bookInstance === null) {
-      res.redirect('/catalog/bookinstances');
-    }
-    res.render('bookinstance_delete', {
-      title: 'Delete BookInstance',
-      bookinstance: bookInstance
-    });
-  }).catch(error => next(error));
+    .exec()
+    .then(bookinstance => {
+      if(bookinstance === null) {
+        const error = ResourceNotFoundError('Bookinstance not found');
+        return Promise.reject(error);
+      }
+      return BookInstance.findByIdAndRemove(req.params.id).exec();
+    })
+    .then(() => {res.status(204).end(); })
+    .catch(error => next(error));
 };
 
-const bookinstanceDeletePost = function(req, res, next) {
-  BookInstance.findByIdAndRemove(req.body.bookinstanceid)
-  .exec()
-  .then(() => {
-    res.redirect('/catalog/bookinstances');
-  }).catch(error => next(error));
-};  
-
 module.exports = {
-  bookinstanceDeleteGet,
-  bookinstanceDeletePost
+  bookinstanceDelete
 };
