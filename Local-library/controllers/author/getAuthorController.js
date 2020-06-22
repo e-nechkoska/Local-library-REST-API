@@ -3,7 +3,6 @@ const { ResourceNotFoundError } = require('../../shared');
 
 const authorList = (req, res, next) => {
   Author.find()
-    .populate('author')
     .sort({'familyName': 1})
     .exec()
     .then(authors => {
