@@ -11,7 +11,9 @@ const bookinstanceDelete = (req, res, next) => {
       }
       return BookInstance.findByIdAndRemove(req.params.id).exec();
     })
-    .then(() => {res.status(204).end(); })
+    .then(() => {
+      res.status(204).end(); 
+    })
     .catch(error => next(error));
 };
 
