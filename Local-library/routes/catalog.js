@@ -26,7 +26,7 @@ let bookinstanceController = require('../controllers/bookinstance');
 router.get('/genres/:id', genreController.genreDetail);
 router.get('/genres', genreController.genreList);
 router.post('/genres', genreController.genreCreate);
-// router.put('/genres/:id', genreController.genreUpdate);
+router.put('/genres/:id', genreController.genreUpdate);
 router.delete('/genres/:id', genreController.genreDelete);
 
 // BOOKINSTANCE ROUTES
