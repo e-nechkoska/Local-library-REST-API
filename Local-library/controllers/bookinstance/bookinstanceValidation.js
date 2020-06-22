@@ -1,6 +1,6 @@
 const { body } = require('express-validator');
 
-const validateBody = body('book', 'Book must be specified')
+const validateBook = body('bookId', 'Book must be specified')
   .trim()
   .isLength({min: 1})
   .escape();
@@ -21,7 +21,7 @@ const validateStatus = body('status')
   .escape();
 
 const validateBookinstance = [
-  validateBody,
+  validateBook,
   validateImprint,
   validateDueBack,
   validateStatus
