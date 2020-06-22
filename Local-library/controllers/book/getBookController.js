@@ -1,53 +1,29 @@
 const Book = require('../../models/book');
-const BookInstance = require('../../models/bookinstance');
-const { compareStrings } = require('../../utils');
+const { ResourceNotFoundError } = require('../../shared');
 
-const bookList = function(req, res, next) {
-  
-  Book.find({}, 'title author')
-  .populate('author')
-  .exec()
-  .then(listBooks => {
-    if(req.query.sort === 'author') {
-      listBooks.sort(function (first, second) {
-        return compareStrings(first.author.familyName, second.author.familyName);
-      });
-    } else {
-      listBooks.sort(function (first, second) {
-        return compareStrings(first.title, second.title);
-      });
-    };   
-   
-    res.render('book_list', {
-      title: 'Book List', 
-      bookList: listBooks,
-      sort: req.query.sort
-    });
-  }).catch(error => next(error));
+const bookList = (req, res, next) => {
+  Book.find()
+    .sort({'title': 1})
+    .populate('author')
+    .populate('genre')
+    .exec()
+    .then(books => {
+      res.status(200).json({data: books});
+    }).catch(error => next(error));
 };
 
-const bookDetail = function(req, res, next) {
-  const bookFindByIdPromise = Book.findById(req.params.id)
-  .populate('author')
-  .populate('genre')
-  .exec();
-  const bookInstanceFindPromise = BookInstance.find({'book': req.params.id})
-  .exec();
-
-  Promise.all([bookFindByIdPromise, bookInstanceFindPromise])
-  .then((results) => {
-    const [book, bookInstances] = results;
-    if(book === null) {
-      let error = new Error('Book not found');
-      error.status = 404;
-      return next(error);
-    }
-    res.render('book_detail', {
-      title: book.title, 
-      book: book, 
-      bookInstances: bookInstances
-    });
-  }).catch(error => next(error));      
+const bookDetail = (req, res, next) => {
+  Book.findById(req.params.id)
+    .populate('author')
+    .populate('genre')
+    .exec()
+    .then(book => {
+      if(book === null) {
+        const error = new ResourceNotFoundError('Book not found');
+        return next(error);
+      }
+      res.status(200).json({data: book});
+    }).catch(error => next(error));
 };
 
 module.exports = {
