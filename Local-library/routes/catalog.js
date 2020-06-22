@@ -9,15 +9,15 @@ let bookinstanceController = require('../controllers/bookinstance');
 // BOOK ROUTES
 // router.get('/', bookController.index);
 
-// router.get('/books', bookController.bookList);
-// router.get('/books/:id', bookController.bookDetail);
+router.get('/books', bookController.bookList);
+router.get('/books/:id', bookController.bookDetail);
 // router.post('/books', bookController.bookCreate);
 // router.put('/books/:id', bookController.bookUpdate);
 // router.delete('/books/:id', bookController.bookDelete);
 
 // // AUTHOR ROUTES
-// router.get('/authors', authorController.authorList);
-// router.get('/authors/:id', authorController.authorDetail);
+router.get('/authors', authorController.authorList);
+router.get('/authors/:id', authorController.authorDetail);
 // router.post('/authors', authorController.authorCreate);
 // router.put('/authors/:id', authorController.authorUpdate);
 // router.delete('/authors/:id', authorController.authorDelete);
