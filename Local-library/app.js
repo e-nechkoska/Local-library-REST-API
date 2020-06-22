@@ -10,6 +10,7 @@ let helmet = require('helmet');
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let catalogRouter = require('./routes/catalog');
+const { ValidationError } = require('./shared');
 
 let app = express();
 
@@ -51,7 +52,11 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   if (err.status === 406) {
-    res.json({data: err.validationErrors});
+    if(err instanceof ValidationError) {
+      res.status(err.status).json({data: err.validationErrors});
+    } else {
+      res.status(err.status).json({data: {message: err.message, books: err.books}});
+    }
   } else {
     res.status(err.status || 500).json({data: err.stack});
   }
