@@ -1,7 +1,7 @@
 const { genreList, genreDetail } = require('./getGenreController');
 const { genreCreate } = require('./createGenreController');
 const { genreUpdateGet, genreUpdatePost } = require('./updateGenreController');
-const { genreDeleteGet, genreDeletePost } = require('./deleteGenreController');
+const { genreDelete } = require('./deleteGenreController');
 
 module.exports = {
   genreList,
@@ -9,6 +9,5 @@ module.exports = {
   genreCreate,
   genreUpdateGet,
   genreUpdatePost,
-  genreDeleteGet,
-  genreDeletePost
+  genreDelete
 };
