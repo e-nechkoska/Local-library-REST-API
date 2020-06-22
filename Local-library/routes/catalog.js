@@ -30,10 +30,10 @@ router.put('/genres/:id', genreController.genreUpdate);
 router.delete('/genres/:id', genreController.genreDelete);
 
 // BOOKINSTANCE ROUTES
-// router.get('/bookinstances', bookinstanceController.bookinstanceList);
-// router.get('/bookinstances/:id', bookinstanceController.bookinstanceDetail);
-// router.post('/bookinstances', bookinstanceController.bookinstanceCreate);
-// router.put('/bookinstances/:id', bookinstanceController.bookinstanceUpdate);
-// router.delete('/bookinstances/:id', bookinstanceController.bookinstanceDelete);
+router.get('/bookinstances', bookinstanceController.bookinstanceList);
+router.get('/bookinstances/:id', bookinstanceController.bookinstanceDetail);
+router.post('/bookinstances', bookinstanceController.bookinstanceCreate);
+router.put('/bookinstances/:id', bookinstanceController.bookinstanceUpdate);
+router.delete('/bookinstances/:id', bookinstanceController.bookinstanceDelete);
 
 module.exports = router;
