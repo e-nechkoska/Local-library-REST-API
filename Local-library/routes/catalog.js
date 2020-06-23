@@ -14,6 +14,7 @@ router.get('/books', bookController.bookList);
 router.get('/books/:id', bookController.bookDetail);
 router.post('/books', bookController.bookCreate);
 router.put('/books/:id', bookController.bookUpdate);
+router.patch('/books/:id', bookController.partialBookUpdate);
 router.delete('/books/:id', bookController.bookDelete);
 
 // // AUTHOR ROUTES
