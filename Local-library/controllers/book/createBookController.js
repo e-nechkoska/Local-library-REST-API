@@ -1,5 +1,5 @@
 const Book = require('../../models/book');
-const bookValidation = require('./bookValidation');
+const { bookValidation } = require('./bookValidation');
 const { ValidationError } = require('../../shared');
 const { validationResult } = require('express-validator');
 

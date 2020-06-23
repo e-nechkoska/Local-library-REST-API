@@ -1,6 +1,6 @@
 const { bookList, bookDetail } = require('./getBookController');
 const { bookCreate } = require('./createBookController');
-const { bookUpdate } = require('./updateBookController');
+const { bookUpdate, partialBookUpdate } = require('./updateBookController');
 const { bookDelete } = require('./deleteBookController');
 
 module.exports = {
@@ -8,5 +8,6 @@ module.exports = {
   bookDetail,
   bookCreate,
   bookUpdate,
+  partialBookUpdate,
   bookDelete
 };
