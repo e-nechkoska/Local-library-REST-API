@@ -1,56 +1,40 @@
 const Author = require('../../models/author');
 const validateAuthor = require('./authorValidation');
-
+const { ValidationError, ResourceNotFoundError } = require('../../shared');
 const { validationResult } = require('express-validator');
 
-const renderAuthorUpdate = (res, author, errors = null) => {
-  res.render('author_form', {
-    title: 'Update Author',
-    author: author,
-    errors: errors
-  });
-};
+const authorUpdate = [
+  validateAuthor,
 
-const authorUpdateGet = function (req, res, next) {
-  Author.findById(req.params.id).exec().then(author => {
-    if(author === null) {
-      let error = new Error('Author not found');
-      error.status = 404;
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    const author = new Author({
+      firstName: req.body.firstName,
+      familyName: req.body.familyName,
+      dateOfBirth: req.body.dateOfBirth,
+      dateOfDeath: req.body.dateOfDeath,
+      _id: req.params.id
+    });
+
+    if(!errors.isEmpty()) {
+      const error = new ValidationError(errors);
       return next(error);
     }
-    renderAuthorUpdate(res, author);
-  }).catch(error => next(error))
-};
-
-const updateAuthorMiddleware = (req, res, next) => {
-  const errors = validationResult(req);
-
-  let author = new Author({
-    firstName: req.body.firstName,
-    familyName: req.body.familyName,
-    dateOfBirth: req.body.dateOfBirth,
-    dateOfDeath: req.body.dateOfDeath,
-    _id: req.params.id
-  });
-
-  if(!errors.isEmpty()) {
-    Author.find().exec().then(authors => {
-      renderAuthorUpdate(res, authors, errors.array());
-    }).catch(error => next(error));
-  } else {
-    Author.findByIdAndUpdate(req.params.id, author).exec()
-    .then(updatedAuthor => {
-      res.redirect(updatedAuthor.url);
-    }).catch(error => next(error));
+    Author.findByIdAndUpdate(req.params.id, author)
+      .exec()
+      .then(foundAuthor => {
+        if(foundAuthor === null) {
+          const error = new ResourceNotFoundError('Author not found');
+          return Promise.reject(error);
+        }
+        return Author.findById(req.params.id).exec();
+      }).then(updatedAuthor => {
+        res.status(200).json({data: updatedAuthor});
+      }).catch(error => next(error));
   }
-};
-
-const authorUpdatePost = [
-  validateAuthor,
-  updateAuthorMiddleware  
 ];
 
 module.exports = {
-  authorUpdateGet,
-  authorUpdatePost
+  authorUpdate
 };
