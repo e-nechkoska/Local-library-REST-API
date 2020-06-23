@@ -1,15 +1,12 @@
 const { authorList, authorDetail } = require('./getAuthorController');
-const { authorCreateGet, authorCreatePost } = require('./createAuthorController');
-const { authorUpdateGet, authorUpdatePost } = require('./updateAuthorController');
-const { authorDeleteGet, authorDeletePost } = require('./deleteAuthorController');
+const { authorCreate } = require('./createAuthorController');
+const { authorUpdate } = require('./updateAuthorController');
+const { authorDelete } = require('./deleteAuthorController');
 
 module.exports = {
   authorList,
   authorDetail,
-  authorCreateGet,
-  authorCreatePost,
-  authorUpdateGet,
-  authorUpdatePost,
-  authorDeleteGet,
-  authorDeletePost
+  authorCreate,
+  authorUpdate,
+  authorDelete
 };

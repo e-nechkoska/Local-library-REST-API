@@ -5,7 +5,7 @@ const validateTitle = body('title', 'Title must not be empty.')
   .isLength({min: 1})
   .escape();
 
-const validateAuthor = body('author', 'Author must not be empty.')
+const validateAuthor = body('authorId', 'Author must not be empty.')
   .trim()
   .isLength({min: 1})
   .escape();

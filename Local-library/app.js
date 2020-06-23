@@ -55,7 +55,7 @@ app.use(function(err, req, res, next) {
     if(err instanceof ValidationError) {
       res.status(err.status).json({data: err.validationErrors});
     } else {
-      res.status(err.status).json({data: {message: err.message, books: err.books}});
+      res.status(err.status).json({data: {message: err.message, books: err.books, bookinstances: err.bookinstances}});
     }
   } else {
     res.status(err.status || 500).json({data: err.stack});

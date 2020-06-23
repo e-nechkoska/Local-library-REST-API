@@ -1,17 +1,12 @@
-const { index } = require('./indexBookController');
 const { bookList, bookDetail } = require('./getBookController');
-const { bookCreateGet, bookCreatePost } = require('./createBookController');
-const { bookUpdateGet, bookUpdatePost } = require('./updateBookController');
-const { bookDeleteGet, bookDeletePost } = require('./deleteBookController');
+const { bookCreate } = require('./createBookController');
+const { bookUpdate } = require('./updateBookController');
+const { bookDelete } = require('./deleteBookController');
 
 module.exports = {
-  index,
   bookList,
   bookDetail,
-  bookCreateGet,
-  bookCreatePost,
-  bookUpdateGet,
-  bookUpdatePost,
-  bookDeleteGet,
-  bookDeletePost
+  bookCreate,
+  bookUpdate,
+  bookDelete
 };
