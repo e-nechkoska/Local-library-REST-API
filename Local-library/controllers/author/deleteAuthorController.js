@@ -1,47 +1,28 @@
 const Author = require('../../models/author');
 const Book = require('../../models/book');
+const { DeleteAuthorValidationError, ResourceNotFoundError } = require('../../shared');
 
-const renderAuthorDelete = (res, author, authorBooks) => {
-  res.render('author_delete', {
-    title: 'Delete Author',
-    author: author,
-    authorBooksList: authorBooks
-  });
-};
+const authorDelete = (req, res, next) => {
+  const authorFindByIdPromise = Author.findById(req.params.id).exec();
+  const booksFindPromise = Book.find({author: req.params.id}).exec();
 
-const authorDeleteGet = function (req, res, next) {
-  const authorPromise = Author.findById(req.params.id).exec();
-  const authorBooksPromise = Book.find({'author': req.params.id}, 'title summary').exec();
-
-  Promise.all([authorPromise, authorBooksPromise])
-  .then(results => {
-    const [author, authorBooks] = results;
-    if(author === null) {
-      res.redirect('/catalog/authors');
-    }
-    renderAuthorDelete(res, author, authorBooks);
-  }).catch(error => next(error));
-};
-
-const authorDeletePost = function (req, res, next) {
-  const authorPromise = Author.findById(req.body.authorId).exec();
-  const authorBooksPromise = Book.find({'author': req.body.authorId}).exec();
-
-  Promise.all([authorPromise, authorBooksPromise])
-  .then(results => {
-    const [author, authorBooks] = results;
-    if(authorBooks.length > 0) {
-      renderAuthorDelete(res, author, authorBooks);
-    } else {
-      Author.findByIdAndRemove(req.body.authorId)
-      .then(() => {
-        res.redirect('/catalog/authors');
-      }).catch(error => next(error));
-    }
-  });
+  Promise.all([authorFindByIdPromise, booksFindPromise])
+    .then(results => {
+      const [author, books] = results;
+      if(author === null) {
+        const error = new ResourceNotFoundError('Author not found');
+        return next(error);
+      }
+      if(books.length > 0) {
+        const error = new DeleteAuthorValidationError('Delete the following books before deleting this author: ', books);
+        return Promise.reject(error);
+      }
+      return Author.findByIdAndDelete(req.params.id).exec();  
+    }).then(() => {
+      res.status(204).end();
+    }).catch(error => next(error));
 };
 
 module.exports = {
-  authorDeleteGet,
-  authorDeletePost
-}
+  authorDelete
+};
