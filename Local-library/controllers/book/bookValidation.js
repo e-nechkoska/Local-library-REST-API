@@ -1,8 +1,8 @@
 const { body } = require('express-validator');
 
-const validateTitle = body('title', 'Title must not be empty.')
+const validateTitle = body('title', 'Title must not be empty and it should have at least 3 characters.')
   .trim()
-  .isLength({min: 1})
+  .isLength({min: 3})
   .escape();
 
 const validateAuthor = body('authorId', 'Author must not be empty.')
@@ -24,7 +24,12 @@ const bookValidation = [
   validateTitle,
   validateAuthor,
   validateSummary,
-  validateISBN,
-];  
+  validateISBN
+];
 
-module.exports = bookValidation;
+const partialBookValidation = bookValidation.map(validator => validator.optional());
+
+module.exports = {
+  bookValidation,
+  partialBookValidation
+};
