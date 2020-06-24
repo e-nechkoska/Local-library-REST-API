@@ -1,8 +1,6 @@
 const Genre = require('../../models/genre');
-
-const { body, validationResult } = require('express-validator');
-
 const { ValidationError, ResourceNotFoundError } = require('../../shared');
+const { body, validationResult } = require('express-validator');
 
 const genreUpdate = [
   body('name', 'Genre name must not be empty').trim().isLength({min: 1}).escape(),

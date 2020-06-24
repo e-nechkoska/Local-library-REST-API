@@ -3,7 +3,7 @@ const Author = require('../models/author');
 const Genre = require('../models/genre');
 const BookInstance = require('../models/bookinstance');
 
-const index = function(req, res, next) {   
+const index = (req, res, next) => {   
     const bookCountPromise = Book.countDocuments();
     const bookInscanceCountPromise = BookInstance.countDocuments();
     const bookInscanceAvailableCountPromise = BookInstance.countDocuments({status: 'Available'});
