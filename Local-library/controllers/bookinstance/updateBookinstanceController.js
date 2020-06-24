@@ -92,7 +92,7 @@ const bookinstanceUpdate = [
           const error = new ResourceNotFoundError('Bookinstance not found');
           return Promise.reject(error);
         } 
-        return BookInstance.findById(req.params.id).exec();
+        return BookInstance.findById(req.params.id).populate('book').exec();
       })
       .then(updatedBookinstance => {
         res.status(200).json({data: updatedBookinstance});
