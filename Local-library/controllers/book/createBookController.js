@@ -24,7 +24,7 @@ const bookCreate = [
     book.save()
       .then(result => {
         res.status(201).json({data: result});
-      })
+      }).catch(error => next(error));
   }
 ];
 
