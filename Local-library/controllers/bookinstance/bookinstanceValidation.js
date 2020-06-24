@@ -1,13 +1,8 @@
 const { body, check } = require('express-validator');
 const statuses = require('../../models/statuses');
+const Book = require('../../models/book');
 
 const statusesNames = statuses.map(status => status.name);
-
-console.log(statusesNames);
-const validateBook = body('bookId', 'Book must be specified')
-  .trim()
-  .isLength({min: 1})
-  .escape();
 
 const validateImprint = body('imprint', 'Imprint must be specified')
   .trim()
@@ -21,8 +16,17 @@ const validateDueBack = body('dueBack', 'Invalid date')
 
 const validateStatus = check('status').isIn(statusesNames);
 
+const bookExists = body('bookId').custom(bookId => {
+  return Book.findById(bookId).exec()
+  .then(book => {
+    if(book === null) {
+    return Promise.reject('Book does not exist');
+    }
+  }).catch(error => next(error));
+});
+
 const validateBookinstance = [
-  validateBook,
+  bookExists,
   validateImprint,
   validateDueBack,
   validateStatus
