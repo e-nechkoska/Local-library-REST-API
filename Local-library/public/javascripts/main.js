@@ -20,31 +20,31 @@ const displayAllBooks = () => {
           event.stopPropagation();
           // if(clickedBook === false) {
           //   clickedBook = true;
-          const wrapper = document.createElement("div");
-          const deleteBookBtn = document.createElement("button");
-          const bookAuthor = document.createElement("p");
-          const bookSummary = document.createElement("p");
+          const bookWrapperElement = document.createElement("div");
+          const deleteBookButton = document.createElement("button");
+          const bookAuthorElement = document.createElement("p");
+          const bookSummaryElement = document.createElement("p");
 
-          deleteBookBtn.textContent = "Delete";
+          deleteBookButton.textContent = "Delete";
           
           const bookAuthorName = createAuthorName(books[i].author.firstName, books[i].author.familyName);
-          bookAuthor.textContent = bookAuthorName;
-          bookSummary.textContent = books[i].summary;
+          bookAuthorElement.textContent = bookAuthorName;
+          bookSummaryElement.textContent = books[i].summary;
 
           const updateBookButton = addUpdateBookButton(bookElement, books[i].title, bookAuthorName);
-          deleteBookBtn.addEventListener("click", (event) =>
+          deleteBookButton.addEventListener("click", (event) =>
             event.stopPropagation()
           );
-          wrapper.appendChild(bookAuthor);
-          wrapper.appendChild(bookSummary);
-          wrapper.appendChild(updateBookButton);
-          wrapper.appendChild(deleteBookBtn);
-          bookElement.appendChild(wrapper);
+          bookWrapperElement.appendChild(bookAuthorElement);
+          bookWrapperElement.appendChild(bookSummaryElement);
+          bookWrapperElement.appendChild(updateBookButton);
+          bookWrapperElement.appendChild(deleteBookButton);
+          bookElement.appendChild(bookWrapperElement);
         });
       }
       clicked = true;
     })
-    .catch((error) => console.log(error));
+    .catch((error) => console.log(error,message));
 };
 
 const addUpdateBookButton = (bookElement, title, bookAuthorName) => {
@@ -54,6 +54,7 @@ const addUpdateBookButton = (bookElement, title, bookAuthorName) => {
     event.preventDefault();
     event.stopPropagation();
     addBookForm(bookElement, title, bookAuthorName);
+    addSaveBookUpdateButton(bookElement);
   });
   return updateBookButton;
 };
@@ -120,6 +121,16 @@ const fetchAuthors = () => {
     })
     .catch((error) => console.log(error));
 };
+
+const addSaveBookUpdateButton = (bookElement) => {
+  const saveBookButton = document.createElement("button");
+  saveBookButton.textContent = "Save";
+  bookElement.appendChild(saveBookButton);
+};
+
+// const updateBook = (title, authorName) => {
+//   title.textContent = 
+// };
 
 books.addEventListener("click", () => {
   if (clicked === false) {
