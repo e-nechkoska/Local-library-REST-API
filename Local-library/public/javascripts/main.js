@@ -1,5 +1,5 @@
 const allBooks = document.querySelector(".books");
-const bookList = document.querySelector(".bookList");
+const bookList = document.querySelector(".content-list");
 
 const displayAllBooks = () => {
   fetch("http://localhost:1234/catalog/books")
@@ -177,7 +177,8 @@ const deleteBook = (selectedBook) => {
 
   fetch(url, {
     method: "DELETE"
-  }).then(() => displayAllBooks()); 
+  }).then(() => displayAllBooks())
+  .catch(errpr => console.log(error.message)); 
 }; 
 
 allBooks.addEventListener("click", () => {
