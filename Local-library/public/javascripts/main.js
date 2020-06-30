@@ -1,68 +1,101 @@
-const books = document.querySelector(".books");
+const allBooks = document.querySelector(".books");
 const bookList = document.querySelector(".bookList");
-
-let clicked = false;
-let clickedBook = false;
 
 const displayAllBooks = () => {
   fetch("http://localhost:1234/catalog/books")
-    .then((books) => {
-      return books.json();
+    .then(response => { 
+      return response.json();
     })
-    .then((result) => {
+    .then(result => {
+      bookList.innerHTML = '';
+
       const books = result.data;
       for (let i = 0; i < books.length; i++) {
+        // let clickedBook = false;
         const bookElement = document.createElement("li");
         bookElement.textContent = books[i].title;
         bookList.appendChild(bookElement);
-        bookElement.addEventListener("click", (event) => {
+
+        const showBookDetails = (event) => {
           event.preventDefault();
           event.stopPropagation();
-          // if(clickedBook === false) {
-          //   clickedBook = true;
+          
+          // if (clickedBook) {
+          //   return;
+          // }
+          // clickedBook = true;
+          bookElement.removeEventListener("click", showBookDetails);
+
           const bookWrapperElement = document.createElement("div");
           const deleteBookButton = document.createElement("button");
           const bookAuthorElement = document.createElement("p");
           const bookSummaryElement = document.createElement("p");
 
           deleteBookButton.textContent = "Delete";
-          
+          deleteBookButton.className = "btn-primary";
+
           const bookAuthorName = createAuthorName(books[i].author.firstName, books[i].author.familyName);
           bookAuthorElement.textContent = bookAuthorName;
           bookSummaryElement.textContent = books[i].summary;
 
-          const updateBookButton = addUpdateBookButton(bookElement, books[i].title, bookAuthorName);
-          deleteBookButton.addEventListener("click", (event) =>
-            event.stopPropagation()
-          );
+          const updateBookButton = addUpdateBookButton(bookElement, books[i], bookAuthorName);
+          deleteBookButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            console.log(books[i]._id);
+            deleteBook(books[i]);
+          });
+
           bookWrapperElement.appendChild(bookAuthorElement);
           bookWrapperElement.appendChild(bookSummaryElement);
           bookWrapperElement.appendChild(updateBookButton);
           bookWrapperElement.appendChild(deleteBookButton);
           bookElement.appendChild(bookWrapperElement);
-        });
+        };
+
+        bookElement.addEventListener("click", showBookDetails);
       }
-      clicked = true;
     })
     .catch((error) => console.log(error,message));
 };
 
-const addUpdateBookButton = (bookElement, title, bookAuthorName) => {
+const addUpdateBookButton = (bookElement, book, bookAuthorName) => {
   const updateBookButton = document.createElement("button");
   updateBookButton.textContent = "Update";
+  updateBookButton.className = "btn-primary";
   updateBookButton.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
-    addBookForm(bookElement, title, bookAuthorName);
-    addSaveBookUpdateButton(bookElement);
+    addBookForm(bookElement, book, bookAuthorName);
   });
   return updateBookButton;
 };
 
-const addBookForm = (bookElement, title, selectedAuthorName) => {
+const addBookForm = (bookElement, book, selectedAuthorName) => {
   const updateBookForm = document.createElement("form");
-  addBookTitle(updateBookForm, title);
-  addAuthorSelect(updateBookForm, selectedAuthorName);
+  updateBookForm.classList = "form-group";
+  addBookTitle(updateBookForm, book.title);
+  addAuthorSelect(updateBookForm, selectedAuthorName).then(() => {
+    addSaveBookUpdateButton(updateBookForm);
+  });
+
+  updateBookForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const updatedTitle = updateBookForm.querySelector("input").value;
+    const updatedAuthorId = updateBookForm.querySelector("select").value;
+    
+    const updatedBook = {
+      _id: book._id,
+      genre: book.genre,
+      summary: book.summary,
+      isbn: book.isbn,
+      title: updatedTitle,
+      authorId: updatedAuthorId
+    };
+
+    updateBook(updatedBook);
+  });
+
   bookElement.appendChild(updateBookForm);
 }
 
@@ -73,13 +106,14 @@ const addBookTitle = (updateBookForm, title) => {
 
 const createUpdateTitle = (title) => {
   const updateTitle = document.createElement("input");
-  updateTitle.addEventListener("click", (event) => event.stopPropagation());
+  updateTitle.classList = "form-control";
+  updateTitle.addEventListener("click", event => event.stopPropagation());
   updateTitle.value = title;
   return updateTitle;
 };
 
 const addAuthorSelect = (updateBookForm, selectedAuthorName) => {
-  fetchAuthors().then((authors) => {
+  return fetchAuthors().then((authors) => {
     const authorsSelect = createAuthorsSelect(authors, selectedAuthorName);
     updateBookForm.appendChild(authorsSelect);
   });
@@ -92,20 +126,16 @@ const createAuthorName = (firstName, familyName) => {
 
 const createAuthorsSelect = (authors, selectedAuthorName) => {
   const authorSelect = document.createElement("select");
-  authorSelect.addEventListener("click", (event) => event.stopPropagation());
+  authorSelect.classList = "form-control";
 
   for (let j = 0; j < authors.length; j++) {
     const author = document.createElement("option");
-    author.value = createAuthorName(authors[j].firstName, authors[j].familyName); 
-    author.textContent = author.value;
+    author.value = authors[j]._id; 
+    author.textContent = createAuthorName(authors[j].firstName, authors[j].familyName);
 
     if (selectedAuthorName === author.value) {
       author.selected = true;
     }
-    author.addEventListener("click", (event) => {
-      event.stopPropagation();
-    });
-
     authorSelect.appendChild(author);
   }
 
@@ -122,18 +152,34 @@ const fetchAuthors = () => {
     .catch((error) => console.log(error));
 };
 
-const addSaveBookUpdateButton = (bookElement) => {
+const addSaveBookUpdateButton = (updateBookForm) => {
   const saveBookButton = document.createElement("button");
   saveBookButton.textContent = "Save";
-  bookElement.appendChild(saveBookButton);
+  saveBookButton.className = "btn-primary";
+  updateBookForm.appendChild(saveBookButton);
 };
 
-// const updateBook = (title, authorName) => {
-//   title.textContent = 
-// };
+const updateBook = (updatedBook) => {
+  const url = `http://localhost:1234/catalog/books/${updatedBook._id}`;
 
-books.addEventListener("click", () => {
-  if (clicked === false) {
-    displayAllBooks();
-  }
+  fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(updatedBook)
+  }).then(response => response.json())
+  .then(console.log);
+};
+
+const deleteBook = (selectedBook) => {
+  const url = `http://localhost:1234/catalog/books/${selectedBook._id}`;
+
+  fetch(url, {
+    method: "DELETE"
+  }).then(() => displayAllBooks()); 
+}; 
+
+allBooks.addEventListener("click", () => {
+  displayAllBooks();
 });
