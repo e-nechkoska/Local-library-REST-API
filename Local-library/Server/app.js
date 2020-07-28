@@ -14,7 +14,9 @@ const { ValidationError } = require('./shared');
 
 let app = express();
 
-let mongoDB = 'mongodb+srv://eneck:LocalLibrary1@cluster0-9trdp.mongodb.net/local_library?retryWrites=true&w=majority';
+// when the connection to mongodb atlas is interrupted, use the second connection string to the local database
+// let mongoDB = 'mongodb+srv://eneck:LocalLibrary1@cluster0-9trdp.mongodb.net/local_library?retryWrites=true&w=majority';
+let mongoDB = 'mongodb://localhost:27017/locallibrary?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false';
 let options = {
   useNewUrlParser: true,
   useUnifiedTopology: true
